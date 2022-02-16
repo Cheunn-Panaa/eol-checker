@@ -3,22 +3,24 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cheunn-panaa/eof-checker/configs"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/cheunn-panaa/eol-checker/configs"
 )
+
 //Response type from endoflife.date Interface when its booleanstring ???
 type Response struct {
-	Cycle     string `json:"cycle"`
-	Release string `json:"release"`
-	Eol interface{} `json:"eol,omitempty"`
-	Latest string `json:"latest"`
-	Link string `json:"link,omitempty"`
-	Lts string `json:"lts"`
-	Support interface{} `json:"support,omitempty"`
-	CycleShortHand string `json:"cycleShortHand,omitempty"`
-	Discontinued interface{} `json:"discontinued,omitempty"`
+	Cycle          string      `json:"cycle"`
+	Release        string      `json:"release"`
+	Eol            interface{} `json:"eol,omitempty"`
+	Latest         string      `json:"latest"`
+	Link           string      `json:"link,omitempty"`
+	Lts            string      `json:"lts"`
+	Support        interface{} `json:"support,omitempty"`
+	CycleShortHand string      `json:"cycleShortHand,omitempty"`
+	Discontinued   interface{} `json:"discontinued,omitempty"`
 }
 
 func main() {
@@ -33,7 +35,6 @@ func main() {
 		fmt.Println(boo)
 	}
 
-
 }
 
 // CheckProductEof will call endoflife.date api to check wheter or not the product is readching its eof
@@ -42,8 +43,7 @@ func CheckProductEof(product *configs.Product, config *configs.Config) (bool, er
 	//fmt.Println("Calling API...")
 	client := &http.Client{}
 
-
-	req, err := http.NewRequest("GET", generateUrl(config, product) , nil)
+	req, err := http.NewRequest("GET", generateUrl(config, product), nil)
 	if err != nil {
 		fmt.Print(err.Error())
 	}
@@ -76,7 +76,6 @@ func CheckProductEof(product *configs.Product, config *configs.Config) (bool, er
 	}
 	return false, err
 }
-
 
 func generateUrl(config *configs.Config, product *configs.Product) string {
 	url := fmt.Sprintf("%s/api/%s.json",
