@@ -1,0 +1,40 @@
+default:
+  url: https://endoflife.date
+  alert:
+    month: 12
+products:
+  - name: "bootstrap"
+    version: 4.0.0
+
+  - name: "drupal"
+    version: 7
+
+  - name: "go"
+    version: 1.17
+
+  - name: "java"
+    version: 11
+
+  - name: "kubernetes"
+    version: 1.23
+
+  - name: "mysql"
+    version: 5.7
+    impactedProduct:
+      - "all"
+
+  - name: "php"
+    version: 7.4
+
+  - name: "spring-framework"
+    version: 5.3
+
+  - name: "symfony"
+    version: 3.3
+
+  #- name: "vue"
+  #  version: 2.6.0
+  #  custom_url:
+  #    url: https://github.com/
+  #    method: GET
+  #    body: ""

@@ -49,6 +49,9 @@ nb-configuration.xml
 # OS
 .DS_Store
 
+# Confs
+config.yaml
+
 # Misc
 *.swp
 release.properties

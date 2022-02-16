@@ -1,0 +1,10 @@
+eof:
+  products:
+    - name: "TECH_NAME"
+      version: 1.0.0
+      impactedProduct:
+        - "all"
+      custom_url:
+        url: https://github.com/
+        method: GET
+        body: {}
