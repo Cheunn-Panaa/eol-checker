@@ -2,6 +2,10 @@ default:
   url: https://endoflife.date
   alert:
     month: 12
+plugins:
+  - !include: plugins/slack/config.yaml
+
+
 products:
   - name: "bootstrap"
     version: 4.0.0

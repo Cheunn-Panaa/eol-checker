@@ -1,27 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"time"
 
 	"github.com/cheunn-panaa/eol-checker/configs"
+	"github.com/cheunn-panaa/eol-checker/pkg/api"
 )
-
-//Response type from endoflife.date Interface when its booleanstring ???
-type Response struct {
-	Cycle          string      `json:"cycle"`
-	Release        string      `json:"release"`
-	Eol            interface{} `json:"eol,omitempty"`
-	Latest         string      `json:"latest"`
-	Link           string      `json:"link,omitempty"`
-	Lts            string      `json:"lts"`
-	Support        interface{} `json:"support,omitempty"`
-	CycleShortHand string      `json:"cycleShortHand,omitempty"`
-	Discontinued   interface{} `json:"discontinued,omitempty"`
-}
 
 func main() {
 
@@ -30,61 +15,26 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	client := api.NewHTTPClient(config)
 	for _, product := range config.Products {
-		boo, _ := CheckProductEof(&product, config)
-		fmt.Println(boo)
+		CheckProductEol(client, &product, config)
 	}
 
 }
 
-// CheckProductEof will call endoflife.date api to check wheter or not the product is readching its eof
-func CheckProductEof(product *configs.Product, config *configs.Config) (bool, error) {
-
-	//fmt.Println("Calling API...")
-	client := &http.Client{}
-
-	req, err := http.NewRequest("GET", generateUrl(config, product), nil)
+// CheckProductEol will call endoflife.date api to check wheter or not the product is readching its eof
+func CheckProductEol(client *api.Client, product *configs.Product, config *configs.Config) (bool, error) {
+	response, err := client.GetProjectCycle(product)
 	if err != nil {
-		fmt.Print(err.Error())
+		panic(err)
 	}
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/json")
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Print(err.Error())
-	}
-	defer resp.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Print(err.Error())
-	}
-
-	var response Response
-
-	json.Unmarshal(bodyBytes, &response)
-	//fmt.Printf("API Response as struct %+v\n", response)
-	if response.Eol != nil {
-
-		switch eolT := response.Eol.(type) {
-		case string:
-			alertDate := time.Now().AddDate(0, config.Default.Alerting.Month, 0)
-			eol, _ := time.Parse("2006-01-02", eolT)
-			if eol.Before(alertDate) && response.Support != true {
-				fmt.Println(fmt.Sprintf("CEST LA PANIC %s, %s, %s", product.Name, eolT, alertDate))
-			}
+	if response.EOL.String != nil {
+		alertDate := time.Now().AddDate(0, config.Default.Alerting.Month, 0)
+		eol, _ := time.Parse("2006-01-02", *response.EOL.String)
+		if eol.Before(alertDate) && response.IsSupportedAtDate(alertDate) {
+			fmt.Printf("CEST LA PANIC %s, %s, %s \n ", product.Name,
+				*response.EOL.String, alertDate)
 		}
 	}
 	return false, err
-}
-
-func generateUrl(config *configs.Config, product *configs.Product) string {
-	url := fmt.Sprintf("%s/api/%s.json",
-		config.Default.Url, product.Name)
-	if product.Version != "" {
-		url = fmt.Sprintf("%s/api/%s/%s.json",
-			config.Default.Url, product.Name, product.Version)
-
-		//fmt.Println("Checking End of Life for %s with version %s", product.Name, product.Version)
-	}
-	return url
 }

@@ -1,1 +1,1 @@
-#Eof-checker
+#Eol-checker
