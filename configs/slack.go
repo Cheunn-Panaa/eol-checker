@@ -8,7 +8,7 @@ type Slack struct {
 	IconEmoji   string       `yaml:"icon_emoji"`
 }
 
-//Attachement Slack attachments conf
+//An Attachement Slack attachments conf
 type Attachment struct {
 	Author struct {
 		Name string `yaml:"name"`

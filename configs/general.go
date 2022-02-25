@@ -24,7 +24,7 @@ type Default struct {
 	Alerting Alerting `yaml:"alert"`
 }
 
-//Alerting is the cadence you concider critical for your apps
+//Alerting is the cadence you consider critical for your apps
 type Alerting struct {
 	Month int `yaml:"month"`
 }

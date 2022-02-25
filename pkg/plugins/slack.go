@@ -127,7 +127,7 @@ func (s SlackPlugin) generateFields(product PluginsMessage) []Field {
 	return fields
 }
 
-//addField basicly adds field to field array
+//addField basically adds field to field array
 func addField(fields []Field, fieldTitle string, fieldValue string, fieldShort bool) []Field {
 	if fieldTitle != "" && fieldValue != "" {
 
