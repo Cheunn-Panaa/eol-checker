@@ -1,6 +1,4 @@
-includes:
-  - plugins/slack/config.yaml
-  
+
 default:
   url: https://endoflife.date
   alert:
@@ -19,3 +17,20 @@ products:
     version: 11
 
 
+plugins: 
+  slack:
+    webhook_url: https://hooks.slack.com/services/####/#####
+    attachments: 
+      - author: 
+          name: End Of Life Notifier
+          link: https://cloudposse.com/wp-content/uploads/sites/29/2018/02/small-cute-robot-square.png
+          icon: https://cloudposse.com/wp-content/uploads/sites/29/2018/02/small-cute-robot-square.png
+        color: good
+        fallback: Deployed to Staging env
+        footer: helm deployments
+        footer_icon: https://cloudposse.com/wp-content/uploads/sites/29/2018/02/kubernetes.png
+        title: Environment Updated
+        title_link: http://demo1.cloudposse.com
+        thumb_url: https://cloudposse.com/wp-content/uploads/sites/29/2018/02/SquareLogo2.png 
+    user_name: Robot
+    icon_emoji: white_check_mark

@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/cheunn-panaa/eol-checker/configs"
+	"github.com/cheunn-panaa/eol-checker/pkg/api"
+	"github.com/cheunn-panaa/eol-checker/pkg/utils"
 )
 
 // Plugins container
@@ -14,11 +16,22 @@ type Plugins interface {
 
 // Plugin interface
 type Plugin interface {
-	SendMessage() interface{}
+	SendMessage([]PluginsMessage) interface{}
 }
 
 type pluginsContainer struct {
 	plugins map[string]*Plugin
+}
+type PluginsMessage struct {
+	Name         string
+	Cycle        string
+	LatestCycle  utils.StringOrInt
+	Release      string
+	EOL          utils.StringOrBool
+	Latest       string
+	Link         string
+	LTS          bool
+	Discontinued string
 }
 
 // AddPlugin method to add a plugin to plugin container
@@ -48,7 +61,7 @@ func newPluginsContainer() *Plugins {
 }
 
 // Load plugins at start
-func Load(config configs.Config) (Plugins, error) {
+func Load(config *configs.Config) (Plugins, error) {
 	sc := *newPluginsContainer()
 
 	if err := sc.AddPlugin("slack", initSlackPlugin(config)); err != nil {
@@ -56,4 +69,16 @@ func Load(config configs.Config) (Plugins, error) {
 	}
 
 	return sc, nil
+}
+
+func MessageBuilder(project *api.ProjectCycle, product *configs.Product) PluginsMessage {
+	return PluginsMessage{
+		Name:        product.Name,
+		Cycle:       product.Version,
+		LatestCycle: project.LatestCycle,
+		Release:     project.Release,
+		EOL:         project.EOL,
+		Latest:      project.Latest,
+		LTS:         project.LTS,
+	}
 }

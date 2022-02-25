@@ -44,7 +44,7 @@ func (c *Client) sendRequest(req *http.Request, objStruct interface{}) error {
 
 // GetProjectCycle retrieves specific version of a project
 func (c *Client) GetProjectCycle(product *configs.Product) (*ProjectCycle, error) {
-	req, err := http.NewRequest("GET", c.generateUrl(product), nil)
+	req, err := http.NewRequest("GET", c.generateUrl(product, false), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -55,15 +55,27 @@ func (c *Client) GetProjectCycle(product *configs.Product) (*ProjectCycle, error
 	return res, nil
 }
 
+// GetProjectLatestRelease retrieves last version of a project
+func (c *Client) GetProjectLatestRelease(product *configs.Product) (*ProjectCycle, error) {
+	req, err := http.NewRequest("GET", c.generateUrl(product, true), nil)
+	if err != nil {
+		return nil, err
+	}
+	res := ProjectCycleList{}
+	if err := c.sendRequest(req, &res); err != nil {
+		return nil, err
+	}
+	return res[0], nil
+}
+
 // generateUrl will return specific version endpoint if it's specified
-func (c *Client) generateUrl(product *configs.Product) string {
+func (c *Client) generateUrl(product *configs.Product, forceNoVersion bool) string {
 	url := fmt.Sprintf("%s/api/%s.json",
 		c.baseURL, product.Name)
-	if product.Version != "" {
+	if product.Version != "" && !forceNoVersion {
 		url = fmt.Sprintf("%s/api/%s/%s.json",
 			c.baseURL, product.Name, product.Version)
 
-		//fmt.Println("Checking End of Life for %s with version %s", product.Name, product.Version)
 	}
 	return url
 }
