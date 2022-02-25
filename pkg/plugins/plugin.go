@@ -19,9 +19,12 @@ type Plugin interface {
 	SendMessage([]PluginsMessage) interface{}
 }
 
+//pluginsContainer di container
 type pluginsContainer struct {
 	plugins map[string]*Plugin
 }
+
+//PluginsMessqge generic type for each plugin
 type PluginsMessage struct {
 	Name         string
 	Cycle        string
@@ -71,6 +74,7 @@ func Load(config *configs.Config) (Plugins, error) {
 	return sc, nil
 }
 
+//MessageBuilder will generate a message from given objects
 func MessageBuilder(project *api.ProjectCycle, product *configs.Product) PluginsMessage {
 	return PluginsMessage{
 		Name:        product.Name,

@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/cheunn-panaa/eol-checker/pkg/utils"
 )
@@ -20,8 +19,11 @@ type ProjectCycle struct {
 	Discontinued   utils.StringOrBool `json:"disconitinued"`
 	LatestCycle    utils.StringOrInt
 }
+
+//ProjectCycleList list of ProjectCycle
 type ProjectCycleList []*ProjectCycle
 
+//errorResponse basic http error type
 type errorResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -31,12 +33,4 @@ type errorResponse struct {
 type Client struct {
 	baseURL    string
 	httpClient *http.Client
-}
-
-func (p *ProjectCycle) IsSupportedAtDate(alertDate time.Time) bool {
-	if p.Support.String != "" {
-		supportDate, _ := time.Parse("2006-01-02", p.Support.String)
-		return supportDate.Before(alertDate)
-	}
-	return p.Support.Bool
 }

@@ -55,12 +55,15 @@ func (strint *StringOrBool) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+//ToString returns a string representation of StirngOrInt type
 func (strint *StringOrInt) ToString() string {
 	if strint.String == "" {
 		return fmt.Sprintf("%d", strint.Int)
 	}
 	return strint.String
 }
+
+//DateFormat returns a date format from unknown type
 func DateFormat(date interface{}, format string) string {
 	var returnedDate time.Time
 	switch v := date.(type) {

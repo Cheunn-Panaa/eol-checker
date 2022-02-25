@@ -1,11 +1,14 @@
 package configs
 
+//Slack base config for slack's plugin
 type Slack struct {
 	WebhookURL  string       `yaml:"webhook_url"`
 	Attachments []Attachment `yaml:"attachments"`
 	UserName    string       `yaml:"user_name"`
 	IconEmoji   string       `yaml:"icon_emoji"`
 }
+
+//Attachement Slack attachments conf
 type Attachment struct {
 	Author struct {
 		Name string `yaml:"name"`

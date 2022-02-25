@@ -20,6 +20,7 @@ func NewHTTPClient(c *configs.Config) *Client {
 	}
 }
 
+//sendRequest is the basic func for every http request to endoflife.date
 func (c *Client) sendRequest(req *http.Request, objStruct interface{}) error {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")

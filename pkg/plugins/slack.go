@@ -3,15 +3,14 @@ package plugins
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/cheunn-panaa/eol-checker/configs"
 	"github.com/cheunn-panaa/eol-checker/pkg/utils"
 )
 
+//SlackPlugin constructor
 type SlackPlugin struct {
 	conf *configs.Slack
 }
@@ -55,7 +54,7 @@ type Payload struct {
 	Thread      string       `json:"thread_ts,omitempty"`
 }
 
-// SendMessage method
+// SendMessage method commonly used by all plugins
 func (s SlackPlugin) SendMessage(productList []PluginsMessage) interface{} {
 
 	attachments := s.generateAttachments(productList)
@@ -89,6 +88,7 @@ func (s SlackPlugin) SendMessage(productList []PluginsMessage) interface{} {
 	return nil
 }
 
+//generateAttachments generates attachments for slack message
 func (s SlackPlugin) generateAttachments(productList []PluginsMessage) []Attachment {
 	var attachments []Attachment
 	if s.conf.Attachments != nil {
@@ -108,6 +108,7 @@ func (s SlackPlugin) generateAttachments(productList []PluginsMessage) []Attachm
 	return attachments
 }
 
+//generateFields generates each field for attachments
 func (s SlackPlugin) generateFields(product PluginsMessage) []Field {
 
 	var fields []Field
@@ -117,36 +118,30 @@ func (s SlackPlugin) generateFields(product PluginsMessage) []Field {
 	} else {
 		message = utils.DateFormat(product.EOL.String, "02 January 2006")
 	}
-	fields = addField(fields, "Product", product.Name, "true")
-	fields = addField(fields, "Your version", product.Cycle, "true")
-	fields = addField(fields, "Released in", utils.DateFormat(product.Release, "02 January 2006"), "true")
-	fields = addField(fields, "End of Life", message, "true")
-	fields = addField(fields, "Latest minor version", product.Latest, "true")
-	fields = addField(fields, "Latest major version", product.LatestCycle.ToString(), "true")
+	fields = addField(fields, "Product", product.Name, true)
+	fields = addField(fields, "Your version", product.Cycle, true)
+	fields = addField(fields, "Released in", utils.DateFormat(product.Release, "02 January 2006"), true)
+	fields = addField(fields, "End of Life", message, true)
+	fields = addField(fields, "Latest minor version", product.Latest, true)
+	fields = addField(fields, "Latest major version", product.LatestCycle.ToString(), true)
 	return fields
 }
-func addField(fields []Field, fieldTitle string, fieldValue string, fieldShort string) []Field {
-	if fieldTitle != "" && fieldValue != "" {
-		var short = false
-		var err error
 
-		if fieldShort != "" {
-			if short, err = strconv.ParseBool(fieldShort); err != nil {
-				fmt.Println("slack-notifier: Error: ", err.Error())
-				short = false
-			}
-		}
+//addField basicly adds field to field array
+func addField(fields []Field, fieldTitle string, fieldValue string, fieldShort bool) []Field {
+	if fieldTitle != "" && fieldValue != "" {
 
 		fields = append(fields, Field{
 			Title: fieldTitle,
 			Value: fieldValue,
-			Short: short,
+			Short: fieldShort,
 		})
 	}
 
 	return fields
 }
 
+//colorHandler generate color from eol date
 func colorHandler(eol utils.StringOrBool) string {
 	if eol.String != "" {
 
@@ -163,6 +158,7 @@ func colorHandler(eol utils.StringOrBool) string {
 	return "good"
 }
 
+//generateText generate eol date text
 func generateText(eol utils.StringOrBool) string {
 	if eol.String != "" {
 
@@ -179,6 +175,7 @@ func generateText(eol utils.StringOrBool) string {
 	return "good"
 }
 
+//initSlackPlugin init func
 func initSlackPlugin(config *configs.Config) *Plugin {
 	var plugin Plugin
 	plugin = SlackPlugin{conf: &config.Plugins.Slack}
