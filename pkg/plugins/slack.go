@@ -3,6 +3,7 @@ package plugins
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -57,6 +58,7 @@ type Payload struct {
 // SendMessage method commonly used by all plugins
 func (s SlackPlugin) SendMessage(productList []PluginsMessage) interface{} {
 
+	fmt.Printf("test %+v", s.conf)
 	attachments := s.generateAttachments(productList)
 
 	payload := Payload{
@@ -68,12 +70,13 @@ func (s SlackPlugin) SendMessage(productList []PluginsMessage) interface{} {
 	}
 	data, err := json.Marshal(payload)
 	if err != nil {
+		fmt.Errorf("Error occured %s", err)
 		return err
 	}
-
 	body := bytes.NewBuffer(data)
 	request, err := http.NewRequest("POST", s.conf.WebhookURL, body)
 	if err != nil {
+		fmt.Errorf("Error occured %s", err)
 		return err
 	}
 
@@ -81,8 +84,11 @@ func (s SlackPlugin) SendMessage(productList []PluginsMessage) interface{} {
 
 	client := &http.Client{}
 	_, err = client.Do(request)
+
 	if err != nil {
+		fmt.Errorf("Error occured %s", err)
 		return err
+
 	}
 
 	return nil
@@ -176,7 +182,7 @@ func generateText(eol utils.StringOrBool) string {
 }
 
 //initSlackPlugin init func
-func initSlackPlugin(config *configs.Config) *Plugin {
+func initSlackPlugin(config *configs.Configuration) *Plugin {
 	var plugin Plugin
 	plugin = SlackPlugin{conf: &config.Plugins.Slack}
 	return &plugin

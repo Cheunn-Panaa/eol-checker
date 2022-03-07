@@ -64,7 +64,7 @@ func newPluginsContainer() *Plugins {
 }
 
 // Load plugins at start
-func Load(config *configs.Config) (Plugins, error) {
+func Load(config *configs.Configuration) (Plugins, error) {
 	sc := *newPluginsContainer()
 
 	if err := sc.AddPlugin("slack", initSlackPlugin(config)); err != nil {

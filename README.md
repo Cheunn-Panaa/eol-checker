@@ -48,7 +48,7 @@ go run main.go
 
 _DONT._
 
-1. Do
+1. Don't
 2. Run
 3. It
 4. Please
@@ -72,8 +72,18 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 - [x] Add A Readme template
 - [x] Add back to top links
+- [x] Make it runnable as a cli ?
+    - [ ] Make it runnable project wise rather than global.
+    - [ ] Is global conf still necessary 
+- [ ] Proper Error Handling
+- [ ] Better docs (but i wont kekw)
+- [ ] More "Plugins" for alerting
+    - [ ] Mailing
+    - [ ] Telegram ?
+    - [ ] Discord ?
+    - [ ] ????
 - [ ] No
-- [ ] Roadmap
+- [ ] Fun Roadmap
 - [ ] Yet
     - [ ] duh
     - [ ] doh
@@ -89,7 +99,7 @@ See the [open issues](https://github.com/Cheunn-Panaa/eol-checker/issues) for a 
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-But please dont contribute YET
+Only contribute if you are very good in golang so you can fix my rookie mistakes.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -99,5 +109,6 @@ But please dont contribute YET
 ## License
 
 Distributed under the AGPL-3.0 License. See `LICENSE` for more information.
+idk what License means ?????
 
 <p align="right">(<a href="#top">back to top</a>)</p>

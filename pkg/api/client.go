@@ -11,7 +11,7 @@ import (
 )
 
 // NewHTTPClient generates new http client
-func NewHTTPClient(c *configs.Config) *Client {
+func NewHTTPClient(c *configs.Configuration) *Client {
 	return &Client{
 		baseURL: c.Default.Url,
 		httpClient: &http.Client{

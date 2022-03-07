@@ -1,52 +1,79 @@
 package configs
 
 import (
-	"io/ioutil"
+	"fmt"
 
-	"gopkg.in/yaml.v3"
+	"github.com/spf13/viper"
 )
 
+var Config *Configuration
+
 //Config base type for everything
-type Config struct {
-	Default  Default   `yaml:"default"`
-	Products []Product `yaml:"products"`
-	Plugins  Plugins   `yaml:"plugins"`
+type Configuration struct {
+	Default  Default   `mapstructure:"default"`
+	Products []Product `mapstructure:"products"`
+	Plugins  Plugins   `mapstructure:"plugins"`
 }
 
 //Plugins is the type that stores every plugins conf
 type Plugins struct {
-	Slack Slack `yaml:"slack"`
+	Slack Slack `mapstructure:"slack"`
 }
 
 //Default is the base conf for the app
 type Default struct {
-	Url      string   `yaml:"url"`
-	Alerting Alerting `yaml:"alert"`
+	Url      string   `mapstructure:"url"`
+	Alerting Alerting `mapstructure:"alert"`
 }
 
 //Alerting is the cadence you consider critical for your apps
 type Alerting struct {
-	Month int `yaml:"month"`
+	Month int `mapstructure:"month"`
 }
 
 //Product is the default config for product/software eol
 type Product struct {
-	Name    string `yaml:"name"`
-	Version string `yaml:"version"`
-	Custom  Custom `yaml:"custom_url"`
+	Name    string `mapstructure:"name"`
+	Version string `mapstructure:"version"`
+	Custom  Custom `mapstructure:"custom_url"`
 }
 
 //TODO: do it ?
 //Custom custom config for eol
 type Custom struct {
-	Url    string `yaml:"url"`
-	Method string `yaml:"method"`
-	Body   string `yaml:"body"`
+	Url    string `mapstructure:"url"`
+	Method string `mapstructure:"method"`
+	Body   string `mapstructure:"body"`
 }
 
-// NewConfig is constructor
-func NewConfig(filename string) (config *Config, err error) {
-	b, err := ioutil.ReadFile(filename)
-	err = yaml.Unmarshal(b, &config)
-	return
+// LoadConfiguration is constructor
+func LoadConfiguration(configFile string, envPrefix string, v *viper.Viper) {
+	var configuration *Configuration
+
+	v.SetConfigFile(configFile)
+	// We are only looking in the current working directory.
+	v.AddConfigPath(".")
+
+	v.SetEnvPrefix(envPrefix)
+
+	// read in environment variables that match
+	v.AutomaticEnv()
+
+	// If a config file is found, read it in. else returns an error
+	if err := v.ReadInConfig(); err == nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			fmt.Sprintf("Error reading config file, %s", err)
+		}
+	}
+
+	err := v.Unmarshal(&configuration)
+	if err != nil {
+		fmt.Sprintf("Unable to decode into struct, %v", err)
+	}
+
+	Config = configuration
+}
+
+func GetConfig() *Configuration {
+	return Config
 }
