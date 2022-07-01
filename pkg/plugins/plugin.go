@@ -4,14 +4,15 @@ import (
 	"fmt"
 
 	"github.com/cheunn-panaa/eol-checker/configs"
+	"github.com/cheunn-panaa/eol-checker/internal/utils"
 	"github.com/cheunn-panaa/eol-checker/pkg/api"
-	"github.com/cheunn-panaa/eol-checker/pkg/utils"
 )
 
 // Plugins container
 type Plugins interface {
 	AddPlugin(name string, plugin *Plugin) error
 	GetPlugin(name string) (Plugin, error)
+	GetAllPlugins() (map[string]*Plugin, error)
 }
 
 // Plugin interface
@@ -55,6 +56,15 @@ func (sc pluginsContainer) GetPlugin(name string) (Plugin, error) {
 	}
 
 	return nil, fmt.Errorf("'%s' plugin name is not set", name)
+}
+
+// GetAllPlugins retrieve all listed plugins
+func (sc pluginsContainer) GetAllPlugins() (map[string]*Plugin, error) {
+	if len(sc.plugins) > 0 {
+		return sc.plugins, nil
+	}
+
+	return nil, fmt.Errorf("plugin list is empty")
 }
 
 // newPluginsContainer constructor

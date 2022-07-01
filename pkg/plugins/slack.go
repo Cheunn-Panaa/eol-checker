@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/cheunn-panaa/eol-checker/configs"
-	"github.com/cheunn-panaa/eol-checker/pkg/utils"
+	"github.com/cheunn-panaa/eol-checker/internal/utils"
 )
 
 //SlackPlugin constructor

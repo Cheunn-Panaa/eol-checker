@@ -8,12 +8,13 @@ import (
 	"time"
 
 	"github.com/cheunn-panaa/eol-checker/configs"
+	"github.com/spf13/viper"
 )
 
 // NewHTTPClient generates new http client
-func NewHTTPClient(c *configs.Configuration) *Client {
+func NewHTTPClient() *Client {
 	return &Client{
-		baseURL: c.Default.Url,
+		baseURL: viper.GetString("default.url"),
 		httpClient: &http.Client{
 			Timeout: time.Second * 30,
 		},

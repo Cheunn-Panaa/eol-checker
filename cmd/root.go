@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cheunn-panaa/eol-checker/configs"
+	"github.com/cheunn-panaa/eol-checker/internal/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -15,17 +16,21 @@ var configFile string
 
 const (
 	// The name of our config file
-	defaultConfigFilename = "eol-config.yaml"
+	defaultConfigFilename = "eol-cli"
 
 	// The environment variable prefix of all environment variables bound to our command line flags.
 	// For example, --number is bound to EOL_NUMBER.
 	envPrefix = "EOL"
+
+	defaultConfigExtension = "yaml"
 )
 
-// RootCmd represents the base command when called without any subcommands.
-var RootCmd = &cobra.Command{
-	Use:          "dol-eol",
-	Short:        "Check if your application runtime is out of date",
+// rootCmd represents the base command when called without any subcommands.
+var rootCmd = &cobra.Command{
+	Use:   "eol-cli",
+	Short: "Check if your application runtime is out of date",
+	Long: "EOL is a CLI library for project version management. \n This application is a tool to check wether or not your application version is out of date. \n" +
+		"For now it checks on endoflife.date endpoints but is subject to change in the future",
 	SilenceUsage: true,
 
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -34,51 +39,88 @@ var RootCmd = &cobra.Command{
 		//	if verbose, _ := cmd.Flags().GetBool("verbose"); verbose {
 		//		debug.Verbose = verbose
 		//	}
-		initializeConfig(cmd)
+		//initializeConfig()
+		cmd.SetVersionTemplate(utils.GetVersion())
+		//TODO: find a way to make bindFlags(cmd) work
 	},
 }
 
 // Execute adds all child commands to the root command.
 func Execute() {
-	if err := RootCmd.Execute(); err != nil {
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+
 		os.Exit(-1)
 	}
 }
 
 func init() {
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-	RootCmd.PersistentFlags().StringVar(&configFile, "config", "", fmt.Sprintf("config file (default is %s)", defaultConfigFilename))
+	cobra.OnInitialize(initializeConfig)
+	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", fmt.Sprintf("config file (default is %s)", defaultConfigFilename))
 }
 
 // initializeConfig reads in config file and ENV variables if set.
-func initializeConfig(cmd *cobra.Command) {
-	v := viper.New()
-	if configFile == "" {
-		configFile = defaultConfigFilename
+func initializeConfig() {
+	var configuration *configs.Configuration
+
+	if configFile != "" {
+		// Use config file from the flag.
+		viper.SetConfigFile(configFile)
+	} else {
+		// Find home directory.
+		dir, err := utils.GetApplicationDir()
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		// Search config in home directory with name ".twitch-cli" (without extension).
+		viper.AddConfigPath(dir)
+		viper.SetConfigName(defaultConfigFilename)
+		viper.SetConfigType(defaultConfigExtension)
 	}
 
-	configs.LoadConfiguration(configFile, envPrefix, v)
+	viper.AutomaticEnv() // read in environment variables that match
 
-	// Bind the current command's flags to viper
-	bindFlags(cmd, v)
+	// We are only looking in the current working directory.
+	viper.AddConfigPath(".")
+
+	viper.SetEnvPrefix(envPrefix)
+
+	// read in environment variables that match
+	viper.AutomaticEnv()
+
+	// If a config file is found, read it in. else returns an error
+	if err := viper.ReadInConfig(); err == nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			fmt.Sprintf("Error reading config file, %s", err)
+		}
+	}
+
+	err := viper.Unmarshal(&configuration)
+	if err != nil {
+		fmt.Sprintf("Unable to decode into struct, %v", err)
+	}
+
+	configs.SetConfiguration(configuration)
+
 }
 
 // Bind each cobra flag to its associated viper configuration (config file and environment variable)
-func bindFlags(cmd *cobra.Command, v *viper.Viper) {
+func bindFlags(cmd *cobra.Command) {
 	cmd.Flags().VisitAll(func(f *pflag.Flag) {
 		// Environment variables can't have dashes in them, so bind them to their equivalent
 		// keys with underscores, e.g. --disable-messaging to EOL_DISABLE_MESSAGING
+		fmt.Printf("%s, %s \n", f.Name, f.Value)
 		if strings.Contains(f.Name, "-") {
 			envVarSuffix := strings.ToUpper(strings.ReplaceAll(f.Name, "-", "_"))
-			v.BindEnv(f.Name, fmt.Sprintf("%s_%s", envPrefix, envVarSuffix))
+			viper.BindEnv(f.Name, fmt.Sprintf("%s_%s", envPrefix, envVarSuffix))
 		}
 
 		// Apply the viper config value to the flag when the flag is not set and viper has a value
-		if !f.Changed && v.IsSet(f.Name) {
-			val := v.Get(f.Name)
+		if !f.Changed && viper.IsSet(f.Name) {
+			val := viper.Get(f.Name)
 			cmd.Flags().Set(f.Name, fmt.Sprintf("%v", val))
 		}
 	})

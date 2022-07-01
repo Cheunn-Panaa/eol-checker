@@ -1,11 +1,5 @@
 package configs
 
-import (
-	"fmt"
-
-	"github.com/spf13/viper"
-)
-
 var Config *Configuration
 
 //Config base type for everything
@@ -46,32 +40,9 @@ type Custom struct {
 	Body   string `mapstructure:"body"`
 }
 
-// LoadConfiguration is constructor
-func LoadConfiguration(configFile string, envPrefix string, v *viper.Viper) {
-	var configuration *Configuration
-
-	v.SetConfigFile(configFile)
-	// We are only looking in the current working directory.
-	v.AddConfigPath(".")
-
-	v.SetEnvPrefix(envPrefix)
-
-	// read in environment variables that match
-	v.AutomaticEnv()
-
-	// If a config file is found, read it in. else returns an error
-	if err := v.ReadInConfig(); err == nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			fmt.Sprintf("Error reading config file, %s", err)
-		}
-	}
-
-	err := v.Unmarshal(&configuration)
-	if err != nil {
-		fmt.Sprintf("Unable to decode into struct, %v", err)
-	}
-
-	Config = configuration
+// SetConfiguration is constructor
+func SetConfiguration(conf *Configuration) {
+	Config = conf
 }
 
 func GetConfig() *Configuration {

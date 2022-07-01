@@ -2,22 +2,24 @@ package commands
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/cheunn-panaa/eol-checker/configs"
+	"github.com/cheunn-panaa/eol-checker/internal/utils"
 	"github.com/cheunn-panaa/eol-checker/pkg/api"
 	_plugins "github.com/cheunn-panaa/eol-checker/pkg/plugins"
+	"github.com/spf13/viper"
 )
 
 // RunAll is a basic impl
 func RunAll() {
 	config := configs.GetConfig()
-	client := api.NewHTTPClient(config)
+	client := api.NewHTTPClient()
 
-	plugins, _ := _plugins.Load(config)
 	var productList []_plugins.PluginsMessage
 	for _, product := range config.Products {
-		val, err := checkProductEol(client, &product, config)
+		val, err := checkProductEol(client, &product)
 		if err != nil {
 			panic(err)
 		}
@@ -26,24 +28,37 @@ func RunAll() {
 			productList = append(productList, message)
 		}
 	}
+	if !viper.GetBool("disable-message") {
+		sendMessages(config, productList)
+	}
 
-	slack, _ := plugins.GetPlugin("slack")
-	slack.SendMessage(productList)
+}
+func sendMessages(config *configs.Configuration, messages []_plugins.PluginsMessage) {
+	plugins, _ := _plugins.Load(config)
 
+	pluginList, _ := plugins.GetAllPlugins()
+	for plugin := range pluginList {
+		i, _ := plugins.GetPlugin(plugin)
+		i.SendMessage(messages)
+	}
 }
 
 // checkProductEol will call endoflife.date api to check wheter or not the product is readching its eof
-func checkProductEol(client *api.Client, product *configs.Product, config *configs.Configuration) (*api.ProjectCycle, error) {
+func checkProductEol(client *api.Client, product *configs.Product) (*api.ProjectCycle, error) {
+	alertingPeriod, err := strconv.Atoi(viper.GetString("default.alerting.month"))
+	if err != nil {
+		alertingPeriod = 12
+	}
 	response, err := client.GetProjectCycle(product)
 	if err != nil {
 		panic(err)
 	}
 	if response.EOL.String != "" {
-		alertDate := time.Now().AddDate(0, config.Default.Alerting.Month, 0)
+		alertDate := time.Now().AddDate(0, alertingPeriod, 0)
 		eol, _ := time.Parse("2006-01-02", response.EOL.String)
 		if eol.Before(alertDate) {
-			fmt.Printf("CEST LA PANIC %s, %s, %s \n ", product.Name,
-				eol, alertDate)
+			fmt.Printf("%s version %s, end's of life is on %s \n ", product.Name, product.Version,
+				utils.DateFormat(eol, "02-Jan-2006"))
 
 			latest, _ := client.GetProjectLatestRelease(product)
 			response.LatestCycle = latest.Cycle

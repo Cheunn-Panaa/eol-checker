@@ -51,10 +51,13 @@ nb-configuration.xml
 
 # Confs
 config.yaml
-eol-config.yaml
+eol-cli.yaml
 
 # Misc
 *.swp
 release.properties
 pom.xml.releaseBackup
 pom.xml.tag
+
+#bin
+eol-checker

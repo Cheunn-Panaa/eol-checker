@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/cheunn-panaa/eol-checker/pkg/utils"
+	"github.com/cheunn-panaa/eol-checker/internal/utils"
 )
 
 // ProjectCycle is the response of endoflife endpoint for specific project
