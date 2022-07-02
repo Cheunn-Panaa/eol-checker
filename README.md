@@ -75,18 +75,20 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [x] Make it runnable as a cli ?
     - [ ] Make it runnable project wise rather than global.
     - [ ] Is global conf still necessary 
+
+- [ ] Better docs (but i wont)
 - [ ] Proper Error Handling
-- [ ] Better docs (but i wont kekw)
+- [ ] More version checking
+    - [ ] framework specific ?
+    - [ ] library ?
+    - [ ] Dockerfile ?
+    - [ ] ???
 - [ ] More "Plugins" for alerting
     - [ ] Mailing
     - [ ] Telegram ?
     - [ ] Discord ?
     - [ ] ????
-- [ ] No
-- [ ] Fun Roadmap
-- [ ] Yet
-    - [ ] duh
-    - [ ] doh
+- [ ] Better roadmap ?
 
 See the [open issues](https://github.com/Cheunn-Panaa/eol-checker/issues) for a full list of proposed features (and known issues).
 

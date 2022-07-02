@@ -32,7 +32,7 @@ var rootCmd = &cobra.Command{
 	Long: "EOL is a CLI library for project version management. \n This application is a tool to check wether or not your application version is out of date. \n" +
 		"For now it checks on endoflife.date endpoints but is subject to change in the future",
 	SilenceUsage: true,
-
+	Version:      utils.GetVersion(),
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		//TODO: verbose impl
 		// Binding cobra and viper together
