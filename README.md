@@ -32,29 +32,9 @@ To get a local copy up and running follow these simple example steps.
 
 I need to do a proper makefile.... yikes
 
-### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
-
-  ```sh
-  please dont
-  ```
-
-```bash
-go run main.go
-```
-
-### Installation
-
-_DONT._
-
-1. Don't
-2. Run
-3. It
-4. Please
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
+Anyway ...
+- [Installation](docs/INSTALLATION.md)
+- [Configuration](docs/CONFIGURATION.md)
 
 <!-- USAGE EXAMPLES -->
 ## Usage
