@@ -134,9 +134,9 @@ if [ ! -n "$RELEASE_URL" ]; then
   echo "Version $version does not exist."
   exit 1
 fi
-curl -sLO '$RELEASE_URL'
+curl -sLO $RELEASE_URL
 
-tar xzf ./eol-checker-v*_${opsys}-${arch}.tar.gz
+tar xzf ./eol-checker-v*-${opsys}-${arch}.tar.gz
 
 cp ./eol-checker "$where"
 
