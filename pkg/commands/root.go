@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/cheunn-panaa/eol-checker/configs"
@@ -10,6 +11,7 @@ import (
 	"github.com/cheunn-panaa/eol-checker/pkg/api"
 	_plugins "github.com/cheunn-panaa/eol-checker/pkg/plugins"
 	"github.com/spf13/viper"
+	"golang.org/x/exp/slices"
 )
 
 // Run is a basic impl
@@ -41,6 +43,17 @@ func sendMessages(config *configs.Configuration, messages []_plugins.PluginsMess
 		i, _ := plugins.GetPlugin(plugin)
 		i.SendMessage(messages)
 	}
+}
+
+func handleSpecific(products []configs.Product, specific string) []configs.Product {
+	specificSlice := strings.Split(specific, ",")
+	newProductList := []configs.Product{}
+	for _, product := range products {
+		if slices.Contains(specificSlice, product.Name) {
+			newProductList = append(newProductList, product)
+		}
+	}
+	return newProductList
 }
 
 // checkProductEol will call endoflife.date api to check wheter or not the product is readching its eof
