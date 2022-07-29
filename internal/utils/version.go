@@ -1,6 +1,6 @@
 package utils
 
-var version = "v0.0.1"
+var version string = "v0.0.3"
 
 // SetVersion sets the version number for use later in the version command and for request headers.
 func SetVersion(v string) {

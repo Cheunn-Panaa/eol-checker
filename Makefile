@@ -1,5 +1,5 @@
 APPNAME:=$(shell basename $(shell go list))
-APP_VERSION:=v0.0.2
+APP_VERSION:=v0.0.3
 
 GO_LDFLAGS+=-s -w -X 'main.buildVersion=$(APP_VERSION)'
 GO_LDFLAGS:=-ldflags="$(GO_LDFLAGS)"
