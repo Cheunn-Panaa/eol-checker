@@ -8,6 +8,7 @@ import (
 
 var (
 	productList string
+	versionList string
 )
 
 // allCmd represents the all command
@@ -22,7 +23,8 @@ var specificCmd = &cobra.Command{
 func init() {
 
 	specificCmd.Flags().BoolVarP(&disabledMessage, "disable-message", "d", false, "Disables the notifications on all plugins")
-	rootCmd.PersistentFlags().StringVar(&productList, "products", "", "Select one or multiple specific language to check from the config file")
+	rootCmd.PersistentFlags().StringVar(&productList, "products", "", "Select one or multiple specific products to check from the config file or standalone")
+	rootCmd.PersistentFlags().StringVar(&versionList, "versions", "", "If specific product is defined then you can specify a specific version aswell")
 	viper.Set("disable-message", &disabledMessage)
 	rootCmd.AddCommand(specificCmd)
 }
