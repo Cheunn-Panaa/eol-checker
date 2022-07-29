@@ -39,7 +39,27 @@ Anyway ...
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Dont use it ?
+The usage of this cli is pretty straight forward.
+Once you have setup the cli properly, **checkout [Getting Start](#getting-started) if you have missed it**, you can simply run
+
+
+Simply run ```eol-checker```
+```eol-checker -h``` will show usage and list of command
+
+```bash
+EOL is a CLI library for project version management. 
+ This application is a tool to check wether or not your application version is out of date. 
+For now it checks on endoflife.date endpoints but is subject to change in the future
+
+Usage:
+  eol-cli [flags]
+
+Flags:
+  -c, --config string     Configuration file to use (default "eol-cli.yaml")
+  -d, --disable-message   Disables the notifications on all plugins
+  -h, --help              help for eol-cli
+  -v, --version           Display the current version of this CLI
+```
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
