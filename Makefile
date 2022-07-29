@@ -1,7 +1,7 @@
 APPNAME:=$(shell basename $(shell go list))
 APP_VERSION:=v0.0.2-rc
 
-GO_LDFLAGS+=-s -w -X 'main.buildVersion=$(APP_VERSION)'
+GO_LDFLAGS+=-s -w -X github.com/cheunn-panaa/eol-checker/cmd.version=$(APP_VERSION)
 GO_LDFLAGS:=-ldflags="$(GO_LDFLAGS)"
 BINARY = ./$(APPNAME)
 GO_FILES = $(shell find . -type f -name '*.go')

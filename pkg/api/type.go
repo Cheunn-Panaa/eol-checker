@@ -9,7 +9,7 @@ import (
 // ProjectCycle is the response of endoflife endpoint for specific project
 type ProjectCycle struct {
 	Cycle          utils.StringOrInt  `json:"cycle"`
-	Release        string             `json:"release"`
+	Release        string             `json:"releaseDate"`
 	EOL            utils.StringOrBool `json:"eol"`
 	Latest         string             `json:"latest"`
 	Link           string             `json:"link,omitempty"`
