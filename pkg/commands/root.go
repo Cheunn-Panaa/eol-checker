@@ -12,8 +12,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-// RunAll is a basic impl
-func RunAll() {
+// Run is a basic impl
+func Run() {
 	config := configs.GetConfig()
 	client := api.NewHTTPClient()
 

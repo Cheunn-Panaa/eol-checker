@@ -5,7 +5,7 @@ import (
 	"github.com/cheunn-panaa/eol-checker/internal/utils"
 )
 
-var buildVersion = "v0.0.1"
+var buildVersion = "v0.0.2"
 
 func main() {
 	utils.SetVersion(buildVersion)

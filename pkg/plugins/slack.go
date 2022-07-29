@@ -57,8 +57,6 @@ type Payload struct {
 
 // SendMessage method commonly used by all plugins
 func (s SlackPlugin) SendMessage(productList []PluginsMessage) interface{} {
-
-	fmt.Printf("test %+v", s.conf)
 	attachments := s.generateAttachments(productList)
 
 	payload := Payload{

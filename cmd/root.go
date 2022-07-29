@@ -7,12 +7,16 @@ import (
 
 	"github.com/cheunn-panaa/eol-checker/configs"
 	"github.com/cheunn-panaa/eol-checker/internal/utils"
+	"github.com/cheunn-panaa/eol-checker/pkg/commands"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
-var configFile string
+var (
+	configFile      string
+	disabledMessage bool
+)
 
 const (
 	// The name of our config file
@@ -43,6 +47,9 @@ var rootCmd = &cobra.Command{
 		cmd.SetVersionTemplate(utils.GetVersion())
 		//TODO: find a way to make bindFlags(cmd) work
 	},
+	Run: func(cmd *cobra.Command, args []string) {
+		commands.Run()
+	},
 }
 
 // Execute adds all child commands to the root command.
@@ -57,6 +64,8 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initializeConfig)
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", fmt.Sprintf("config file (default is %s)", defaultConfigFilename))
+	rootCmd.PersistentFlags().BoolVarP(&disabledMessage, "disable-message", "d", false, "Disables the notifications on all plugins")
+	viper.Set("disable-message", &disabledMessage)
 }
 
 // initializeConfig reads in config file and ENV variables if set.
