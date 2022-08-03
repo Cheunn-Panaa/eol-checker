@@ -15,7 +15,7 @@ import (
 
 const (
 	// The name of our config file
-	defaultConfigFilename = "eol-cli"
+	defaultConfigFilename = "eol-checker"
 
 	// The environment variable prefix of all environment variables bound to our command line flags.
 	// For example, --number is bound to EOL_NUMBER.
@@ -39,9 +39,9 @@ var (
 
 	// rootCmd represents the base command when called without any subcommands.
 	rootCmd = &cobra.Command{
-		Use:   "eol-cli",
+		Use:   "eol-checker",
 		Short: "Check if your application runtime is out of date",
-		Long: "EOL is a CLI library for project version management. \n This application is a tool to check wether or not your application version is out of date. \n" +
+		Long: "EOL-CHECKER is a CLI library for project version management. \n This application is a tool to check wether or not your application version is out of date. \n" +
 			"For now it checks on endoflife.date endpoints but is subject to change in the future",
 		SilenceUsage: true,
 		Version:      version,

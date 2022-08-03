@@ -2,7 +2,9 @@ package commands
 
 import (
 	"fmt"
+	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/cheunn-panaa/eol-checker/configs"
@@ -33,6 +35,26 @@ func Run() {
 	}
 
 }
+
+func RunSpecific() {
+	config := configs.GetConfig()
+	client := api.NewHTTPClient()
+	products := handleSpecific(config.Products, viper.GetString("productList"), viper.GetString("versionList"))
+	var productList []_plugins.PluginsMessage
+	for _, product := range products {
+		val, err := checkProductEol(client, &product)
+		if err != nil {
+			panic(err)
+		}
+		if val != nil {
+			message := _plugins.MessageBuilder(val, &product)
+			productList = append(productList, message)
+		}
+	}
+	if !viper.GetBool("disable-message") {
+		sendMessages(config, productList)
+	}
+}
 func sendMessages(config *configs.Configuration, messages []_plugins.PluginsMessage) {
 	plugins, _ := _plugins.Load(config)
 
@@ -41,6 +63,24 @@ func sendMessages(config *configs.Configuration, messages []_plugins.PluginsMess
 		i, _ := plugins.GetPlugin(plugin)
 		i.SendMessage(messages)
 	}
+}
+
+func handleSpecific(products []configs.Product, productList string, versionList string) []configs.Product {
+	productSlice := strings.Split(productList, ",")
+	versionSlice := strings.Split(versionList, ",")
+	if len(productSlice) < 1 {
+		fmt.Printf("You should at least specify 1 product")
+		os.Exit(-1)
+	}
+	if len(productSlice) != len(versionSlice) {
+		fmt.Printf("You should associate product with a version")
+		os.Exit(-1)
+	}
+	newProductList := []configs.Product{}
+	for i := 0; i < len(productSlice); i++ {
+		newProductList = append(newProductList, configs.Product{Name: productSlice[i], Version: versionSlice[i]})
+	}
+	return newProductList
 }
 
 // checkProductEol will call endoflife.date api to check wheter or not the product is readching its eof
